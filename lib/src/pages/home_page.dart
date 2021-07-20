@@ -1,6 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce_app/src/model/data.dart';
+import 'package:flutter_ecommerce_app/src/model/product_list.dart';
+import 'package:flutter_ecommerce_app/src/apis/apis_call.dart';
 import 'package:flutter_ecommerce_app/src/themes/light_color.dart';
 import 'package:flutter_ecommerce_app/src/themes/theme.dart';
 import 'package:flutter_ecommerce_app/src/widgets/product_card.dart';
@@ -12,11 +14,16 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
 
-  @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  Future<ProductList> products;
+  @override
+  void initState() {
+    products = loadProductsByIdService();
+  }
+
   Widget _icon(IconData icon, {Color color = LightColor.iconColor}) {
     return Container(
       padding: EdgeInsets.all(10),
@@ -58,35 +65,52 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _productWidget() {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      width: AppTheme.fullWidth(context),
-      height: AppTheme.fullWidth(context) * .7,
-      child: GridView(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 1,
-            childAspectRatio: 4 / 3,
-            mainAxisSpacing: 30,
-            crossAxisSpacing: 20),
-        padding: EdgeInsets.only(left: 20),
-        scrollDirection: Axis.horizontal,
-        children: AppData.productList
-            .map(
-              (product) => ProductCard(
-                product: product,
-                onSelected: (model) {
-                  setState(() {
-                    AppData.productList.forEach((item) {
-                      item.isSelected = false;
-                    });
-                    model.isSelected = true;
-                  });
-                },
+    return FutureBuilder(
+        future: products,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Container(
+              margin: EdgeInsets.symmetric(vertical: 10),
+              width: AppTheme.fullWidth(context),
+              height: AppTheme.fullWidth(context) * .7,
+              child: GridView(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 1,
+                    childAspectRatio: 4 / 3,
+                    mainAxisSpacing: 30,
+                    crossAxisSpacing: 20),
+                padding: EdgeInsets.only(left: 20),
+                scrollDirection: Axis.horizontal,
+                children: snapshot.data
+                    .map(
+                      (product) => ProductCard(
+                        product: product,
+                        onSelected: (model) {
+                          setState(() {
+                            snapshot.data.forEach((item) {
+                              item.isSelected = false;
+                            });
+                            model.isSelected = true;
+                          });
+                        },
+                      ),
+                    )
+                    .toList(),
               ),
-            )
-            .toList(),
-      ),
-    );
+            );
+          } else if (snapshot.hasError) {
+            return Container(
+              margin: EdgeInsets.symmetric(vertical: 10),
+              width: AppTheme.fullWidth(context),
+              height: AppTheme.fullWidth(context) * .7,
+              child: Text('fgfdgfdg'),
+            );
+          }
+
+          return Container(
+            child: Text('error'),
+          );
+        });
   }
 
   Widget _search() {
