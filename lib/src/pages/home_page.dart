@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce_app/src/model/data.dart';
-import 'package:flutter_ecommerce_app/src/model/product.dart';
 import 'package:flutter_ecommerce_app/src/model/product_list.dart';
 import 'package:flutter_ecommerce_app/src/apis/apis_call.dart';
 import 'package:flutter_ecommerce_app/src/themes/light_color.dart';
