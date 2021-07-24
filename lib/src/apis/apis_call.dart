@@ -7,10 +7,6 @@ Future<ProductList> loadProductsByIdService() async {
   ProductList products;
 
   final response = await http.post(Uri.parse(Products),
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
       encoding: Encoding.getByName("utf-8"));
 
   if (response.body.isNotEmpty) {

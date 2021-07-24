@@ -8,6 +8,7 @@ class ProductList {
   });
 
   factory ProductList.fromJson(List<dynamic> parsedJson) {
+    // ignore: deprecated_member_use
     List<Product> products = new List<Product>();
     products = parsedJson.map((i) => Product.fromJson(i)).toList();
 

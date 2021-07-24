@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce_app/src/model/data.dart';
+import 'package:flutter_ecommerce_app/src/model/product.dart';
 import 'package:flutter_ecommerce_app/src/model/product_list.dart';
 import 'package:flutter_ecommerce_app/src/apis/apis_call.dart';
 import 'package:flutter_ecommerce_app/src/themes/light_color.dart';
@@ -19,8 +20,10 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Future<ProductList> products;
+
   @override
   void initState() {
+    super.initState();
     products = loadProductsByIdService();
   }
 
@@ -68,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return FutureBuilder(
         future: products,
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.hasData && snapshot.data.products.length > 0) {
             return Container(
               margin: EdgeInsets.symmetric(vertical: 10),
               width: AppTheme.fullWidth(context),
@@ -81,13 +84,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     crossAxisSpacing: 20),
                 padding: EdgeInsets.only(left: 20),
                 scrollDirection: Axis.horizontal,
-                children: snapshot.data
+                children: snapshot.data.products
                     .map(
                       (product) => ProductCard(
                         product: product,
                         onSelected: (model) {
                           setState(() {
-                            snapshot.data.forEach((item) {
+                            snapshot.data.products.forEach((item) {
                               item.isSelected = false;
                             });
                             model.isSelected = true;
@@ -103,12 +106,14 @@ class _MyHomePageState extends State<MyHomePage> {
               margin: EdgeInsets.symmetric(vertical: 10),
               width: AppTheme.fullWidth(context),
               height: AppTheme.fullWidth(context) * .7,
-              child: Text('fgfdgfdg'),
+              child: Text('${snapshot.error}'),
             );
           }
 
           return Container(
-            child: Text('error'),
+            child: Center(
+              child: const CircularProgressIndicator(),
+            ),
           );
         });
   }
